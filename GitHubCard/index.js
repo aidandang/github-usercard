@@ -3,6 +3,15 @@
            https://api.github.com/users/<your name>
 */
 
+axios.get('https://api.github.com/users/aidandang')
+  .then(response => {
+    const cards = document.querySelector('.cards');
+    cards.appendChild(createCard(response.data));
+  })
+  .catch(err => {
+    console.log(err);
+  })
+
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -24,7 +33,25 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  'tetondan',
+  'dustinmyers',
+  'justsml',
+  'luishrd',
+  'bigknell'
+];
+
+followersArray.forEach(follower => {
+  const url = `https://api.github.com/users/${follower}`;
+  axios.get(url)
+  .then(response => {
+    const cards = document.querySelector('.cards');
+    cards.appendChild(createCard(response.data));
+  })
+  .catch(err => {
+    console.log(err);
+  })
+});
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -53,3 +80,41 @@ const followersArray = [];
   luishrd
   bigknell
 */
+
+const createCard = (userData) => {
+  // Create elements
+  const card = document.createElement('div');
+  const image = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const name = document.createElement('h3');
+  const username = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+  // Create structure
+  card.append(image, cardInfo);
+  cardInfo.append(name, username, location, profile, followers, following, bio);
+
+  // Add styles and attributes
+  card.classList.add('card');
+  image.setAttribute('src', userData['avatar_url']);
+  cardInfo.classList.add('card-info');
+  name.classList.add('name');
+  username.classList.add('username');
+
+  // Add content
+  name.textContent = userData['name'];
+  username.textContent = userData['login'];
+  location.textContent = `Location: ${userData['location']}`;
+  profile.innerHTML = `Profile: <a href=${userData['html_url']}>${userData['html_url']}</a>`;
+  followers.textContent = `Followers: ${userData['followers']}`;
+  following.textContent = `Following: ${userData['following']}`;
+  bio.textContent = `Bio: ${userData['bio']}`;
+
+  return card;
+}
+
+
